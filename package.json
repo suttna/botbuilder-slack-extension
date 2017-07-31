@@ -1,0 +1,30 @@
+{
+  "name": "botbuilder-slack-extension",
+  "version": "1.0.0",
+  "description": "Slack extension for Microsoft BotBuilder",
+  "main": "lib/index.js",
+  "repository": "https://github.com/suttna/botbuilder-slack-extension",
+  "author": "Martin Fernandez <fmartin91@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "babel --source-maps -d lib/ src/",
+    "prepublish" : "yarn build",
+    "lint": "standard 'lib/**.js'",
+    "lint:fix": "standard 'src/**.js' --fix",
+    "ci": "yarn lint"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-core": "6.1.21",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "standard": "^10.0.2"
+  },
+  "keywords": [
+    "bot",
+    "node",
+    "botframework",
+    "botbuilder",
+    "slack"
+  ]
+}
