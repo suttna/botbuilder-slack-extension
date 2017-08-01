@@ -8,26 +8,31 @@ export class SlackEventListener {
 
   start () {
     return (req, res, next) => {
-      const body = req.body
-      const team = body.team_id
-      const channel = body.event.channel.id || body.event.channel
+      if (req.body.type === 'url_verification') {
+        res.end(req.body.challenge)
+        next()
+      } else {
+        const body = req.body
+        const team = body.team_id
+        const channel = body.event.channel.id || body.event.channel
 
-      this.lookupBot(team).then((bot) => {
-        const botbuilderEvent = this.buildBotbuilderEvent({ bot, team, channel, event: body.event })
+        this.lookupBot(team).then((bot) => {
+          const botbuilderEvent = this.buildBotbuilderEvent({ bot, team, channel, event: body.event })
 
-        this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
-          if (!error && status === 202) {
-            res.end(req.body.challenge)
-          } else {
-            res.end(body)
-          }
+          this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
+            if (!error && status === 202) {
+              res.end(req.body.challenge)
+            } else {
+              res.end(body)
+            }
 
-          next()
+            next()
+          })
         })
-      })
-      .catch((error) => {
-        res.send(error)
-      })
+        .catch((error) => {
+          res.send(error)
+        })
+      }
     }
   }
 
