@@ -4,11 +4,13 @@
 
 Slack extension for Microsoft BotBuilder.
 
-This extension will listen for missing (in BotBuilder slack connector) channel and group events.
+This extension will listen for missing (in BotBuilder slack connector) events.
 
 The following events are allowed and need to be configured in slack:
 
 > Note: You need to manually add the events in this page: https://api.slack.com/apps/:APP_ID/event-subscriptions
+
+## conversationUpdate
 
 - channel_archive
 - channel_created
@@ -18,6 +20,10 @@ The following events are allowed and need to be configured in slack:
 - group_archive
 - group_rename
 - group_unarchive
+
+## installationUpdate
+
+- app_uninstalled
 
 ## Install
 
