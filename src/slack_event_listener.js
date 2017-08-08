@@ -1,5 +1,20 @@
 import crypto from 'crypto'
 
+const CONVERSATION_UPDATE_EVENTS = [
+  'channel_archive',
+  'channel_created',
+  'channel_deleted',
+  'channel_rename',
+  'channel_unarchive',
+  'group_archive',
+  'group_rename',
+  'group_unarchive'
+]
+
+const INSTALLATION_UPDATE_EVENTS = [
+  'app_uninstalled'
+]
+
 export class SlackEventListener {
   constructor (connector, lookupBot) {
     this.connector = connector
@@ -14,10 +29,9 @@ export class SlackEventListener {
       } else {
         const body = req.body
         const team = body.team_id
-        const channel = body.event.channel.id || body.event.channel
 
         this.lookupBot(team).then((bot) => {
-          const botbuilderEvent = this.buildBotbuilderEvent({ bot, team, channel, event: body.event })
+          const botbuilderEvent = this.buildBotbuilderEvent({ bot, team, event: body.event })
 
           this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
             if (!error && status === 202) {
@@ -36,7 +50,54 @@ export class SlackEventListener {
     }
   }
 
-  buildBotbuilderEvent ({ bot, team, channel, event }) {
+  buildBotbuilderEvent ({ bot, team, event }) {
+    if (CONVERSATION_UPDATE_EVENTS.includes(event.type)) {
+      return this.buildConversationUpdateEvent({ bot, team, event })
+    } else if (INSTALLATION_UPDATE_EVENTS.includes(event.type)) {
+      return this.buildInstallationUpdateEvent({ bot, team, event })
+    } else {
+      throw new Error(`Unknown slack event type ${event.type}`)
+    }
+  }
+
+  buildInstallationUpdateEvent ({ bot, team, event }) {
+    return {
+      type: 'installationUpdate',
+      text: '',
+      attachments: [],
+      entities: [],
+      sourceEvent: {
+        SlackMessage: {
+          team,
+          ...event
+        }
+      },
+      address: {
+        id: random(32),
+        channelId: 'slack',
+        user: {
+          id: bot.id
+        },
+        conversation: {
+          isGroup: false,
+          id: bot.id
+        },
+        bot: {
+          id: bot.id
+        },
+        serviceUrl: 'https://slack.botframework.com'
+      },
+      source: 'slack',
+      agent: 'suttna-slack-extension',
+      user: {
+        id: bot.id
+      }
+    }
+  }
+
+  buildConversationUpdateEvent ({ bot, team, event }) {
+    const channel = event.channel.id || event.channel
+
     return {
       type: 'conversationUpdate',
       text: '',
