@@ -21,7 +21,7 @@ export class SlackEventListener {
     this.lookupBot = lookupBot
   }
 
-  start () {
+  webhooksHandler () {
     return (req, res, next) => {
       if (req.body.type === 'url_verification') {
         res.end(req.body.challenge)
@@ -46,6 +46,66 @@ export class SlackEventListener {
         .catch((error) => {
           res.send(error)
         })
+      }
+    }
+  }
+
+  commandsHandler () {
+    return (req, res, next) => {
+      const body = req.params
+      const team = body.team_id
+
+      this.lookupBot(team).then((bot) => {
+        const botbuilderEvent = this.buildCommandEvent({ bot, team, commandEvent: body })
+
+        this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
+          if (!error && status === 202) {
+            res.end(req.body.challenge)
+          } else {
+            res.end(body)
+          }
+
+          next()
+        })
+      })
+      .catch((error) => {
+        res.send(error)
+      })
+    }
+  }
+
+  buildCommandEvent ({ bot, team, commandEvent }) {
+    return {
+      type: 'slackCommand',
+      text: '',
+      attachments: [],
+      entities: [],
+      sourceEvent: {
+        SlackMessage: {
+          team,
+          ...commandEvent
+        }
+      },
+      address: {
+        id: random(32),
+        channelId: 'slack',
+        user: {
+          id: `${commandEvent.user_id}:${team}`,
+          name: commandEvent.user_name
+        },
+        conversation: {
+          isGroup: false,
+          id: `${bot.id}:${commandEvent.channel_id}`
+        },
+        bot: {
+          id: bot.id
+        },
+        serviceUrl: 'https://slack.botframework.com'
+      },
+      source: 'slack',
+      agent: 'suttna-slack-extension',
+      user: {
+        id: bot.id
       }
     }
   }

@@ -25,6 +25,11 @@ The following events are allowed and need to be configured in slack:
 
 - app_uninstalled
 
+## slackCommand
+
+You can listen for slack commands. Commands will be sent as custom events with type `slackCommand`. Event
+information will be sent under `sourceEvent => SlackMessage`.
+
 ## Install
 
 ```
@@ -40,6 +45,10 @@ This means you can use:
 ```javascript
  bot.on('event', function(event) {
   // Handle event here
+ })
+
+ bot.on('slackCommand', function(event) {
+  // If you want to use slack commands
  })
 ```
 
@@ -68,7 +77,10 @@ var slackEventListener = new SlackEventListener(connector, function (teamId) {
 server.post('/bot', dependencies.botConnector.listen())
 
 // Start listenting for direct slack events
-server.post('/your-slack-path', slackEventListener.start())
+server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler())
+
+// Start listenting for slack commands
+server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler())
 ```
 
 ## Contact
