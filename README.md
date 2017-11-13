@@ -66,7 +66,7 @@ var bot = new builder.UniversalBot(connector)
 // The lookup function must return a promise with an object that conforms to IIdentity
 var slackEventListener = new SlackEventListener(connector, function (teamId) {
   return new Promise(function (resolve, reject) {
-    // This is you custom get function
+    // This is your custom get function
     const bot = getBot(teamId)
 
     return { id: bot.id, name: bot.name }
