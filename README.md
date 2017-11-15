@@ -73,6 +73,13 @@ var slackEventListener = new SlackEventListener(connector, function (teamId) {
   })
 })
 
+let server = restify.createServer();
+server.use(restify.queryParser());
+server.use(restify.bodyParser());
+server.listen(process.env.port || process.env.PORT || 3978, () => {
+  console.log("%s listening to %s", server.name, server.url);
+});
+
 // Start listenting for botbuilder events
 server.post('/bot', dependencies.botConnector.listen())
 
