@@ -7,7 +7,7 @@
   "author": "Martin Fernandez <fmartin91@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "babel --source-maps -d lib/ src/",
+    "build": "tsc && babel --source-maps -d lib/ src/",
     "ci": "yarn lint",
     "lint": "standard 'lib/**.js'",
     "lint:fix": "standard 'src/**.js' --fix",
