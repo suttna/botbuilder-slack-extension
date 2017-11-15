@@ -55,18 +55,18 @@ This means you can use:
 To configure the extension you simply need to create a listener and hook it in your restify server.
 
 ```javascript
-var restify = require('restify')
-var builder = require('botbuilder')
-var SlackEventListener = require('botbuilder-slack-extension')
+let restify = require('restify');
+let builder = require('botbuilder');
+let SlackEventListener = require('botbuilder-slack-extension');
 
-var connector = new builder.ChatConnector()
-var bot = new builder.UniversalBot(connector)
+let connector = new builder.ChatConnector();
+let bot = new builder.UniversalBot(connector);
 
 // SlackEventListener take two arguments, the chat connector and a lookup function for your bot.
 // The lookup function must return a promise with an object that conforms to IIdentity
-var slackEventListener = new SlackEventListener(connector, function (teamId) {
-  return new Promise(function (resolve, reject) {
-    // This is you custom get function
+let slackEventListener = new SlackEventListener(connector, (teamId) => {
+  return new Promise((resolve, reject) => {
+    // This is you custom get function, which you need to implement yourself
     const bot = getBot(teamId)
 
     return { id: bot.id, name: bot.name }
@@ -81,13 +81,21 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 });
 
 // Start listenting for botbuilder events
-server.post('/bot', dependencies.botConnector.listen())
+server.post("/", connector.listen());
 
 // Start listenting for direct slack events
 server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler())
 
+bot.on('channel_created', (event) => {
+  console.log('we are here');
+});
+
 // Start listenting for slack commands
 server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler())
+
+bot.on('slackCommand', (event) => {
+ // If you want to use slack commands
+})
 ```
 
 ## Contact
