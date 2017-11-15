@@ -67,9 +67,9 @@ let bot = new builder.UniversalBot(connector);
 let slackEventListener = new SlackEventListener(connector, (teamId) => {
   return new Promise((resolve, reject) => {
     // This is you custom get function, which you need to implement yourself
-    const bot = getBot(teamId)
+    const bot = getBot(teamId);
 
-    return { id: bot.id, name: bot.name }
+    return { id: bot.id, name: bot.name };
   })
 })
 
@@ -84,17 +84,17 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 server.post("/", connector.listen());
 
 // Start listenting for direct slack events
-server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler())
+server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler());
 
 bot.on('channel_created', (event) => {
   console.log('we are here');
 });
 
 // Start listenting for slack commands
-server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler())
+server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler());
 
 bot.on('slackCommand', (event) => {
- // If you want to use slack commands
+  // If you want to use slack commands
 })
 ```
 
