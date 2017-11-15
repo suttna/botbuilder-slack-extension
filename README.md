@@ -36,6 +36,8 @@ information will be sent under `sourceEvent => SlackMessage`.
 yarn add botbuilder-slack-extension
 ```
 
+After that change events subscription url on slack: https://api.slack.com/apps/_APP_ID_/event-subscriptions.
+
 ## Usage
 
 The extension will listen for the previously listed slack events and forward them as `conversationUpdate` events.
