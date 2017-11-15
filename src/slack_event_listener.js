@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import crypto from "crypto";
 
 const CONVERSATION_UPDATE_EVENTS = [
   'channel_archive',
@@ -9,19 +9,19 @@ const CONVERSATION_UPDATE_EVENTS = [
   'group_archive',
   'group_rename',
   'group_unarchive'
-]
+];
 
 const INSTALLATION_UPDATE_EVENTS = [
   'app_uninstalled'
-]
+];
 
 export class SlackEventListener {
-  constructor (connector, lookupBot) {
+  constructor(connector, lookupBot) {
     this.connector = connector
     this.lookupBot = lookupBot
   }
 
-  webhooksHandler () {
+  webhooksHandler() {
     return (req, res, next) => {
       if (req.body.type === 'url_verification') {
         res.end(req.body.challenge)
@@ -31,7 +31,40 @@ export class SlackEventListener {
         const team = body.team_id
 
         this.lookupBot(team).then((bot) => {
-          const botbuilderEvent = this.buildBotbuilderEvent({ bot, team, event: body.event })
+            const botbuilderEvent = this.buildBotbuilderEvent({
+              bot,
+              team,
+              event: body.event
+            })
+
+            this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
+              if (!error && status === 202) {
+                res.end(req.body.challenge)
+              } else {
+                res.end(body)
+              }
+
+              next()
+            })
+          })
+          .catch((error) => {
+            res.send(error)
+          })
+      }
+    }
+  }
+
+  commandsHandler() {
+    return (req, res, next) => {
+      const body = req.params
+      const team = body.team_id
+
+      this.lookupBot(team).then((bot) => {
+          const botbuilderEvent = this.buildCommandEvent({
+            bot,
+            team,
+            commandEvent: body
+          })
 
           this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
             if (!error && status === 202) {
@@ -46,35 +79,14 @@ export class SlackEventListener {
         .catch((error) => {
           res.send(error)
         })
-      }
     }
   }
 
-  commandsHandler () {
-    return (req, res, next) => {
-      const body = req.params
-      const team = body.team_id
-
-      this.lookupBot(team).then((bot) => {
-        const botbuilderEvent = this.buildCommandEvent({ bot, team, commandEvent: body })
-
-        this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
-          if (!error && status === 202) {
-            res.end(req.body.challenge)
-          } else {
-            res.end(body)
-          }
-
-          next()
-        })
-      })
-      .catch((error) => {
-        res.send(error)
-      })
-    }
-  }
-
-  buildCommandEvent ({ bot, team, commandEvent }) {
+  buildCommandEvent({
+    bot,
+    team,
+    commandEvent
+  }) {
     return {
       type: 'slackCommand',
       text: '',
@@ -110,17 +122,33 @@ export class SlackEventListener {
     }
   }
 
-  buildBotbuilderEvent ({ bot, team, event }) {
+  buildBotbuilderEvent({
+    bot,
+    team,
+    event
+  }) {
     if (CONVERSATION_UPDATE_EVENTS.includes(event.type)) {
-      return this.buildConversationUpdateEvent({ bot, team, event })
+      return this.buildConversationUpdateEvent({
+        bot,
+        team,
+        event
+      })
     } else if (INSTALLATION_UPDATE_EVENTS.includes(event.type)) {
-      return this.buildInstallationUpdateEvent({ bot, team, event })
+      return this.buildInstallationUpdateEvent({
+        bot,
+        team,
+        event
+      })
     } else {
       throw new Error(`Unknown slack event type ${event.type}`)
     }
   }
 
-  buildInstallationUpdateEvent ({ bot, team, event }) {
+  buildInstallationUpdateEvent({
+    bot,
+    team,
+    event
+  }) {
     return {
       type: 'installationUpdate',
       text: '',
@@ -155,7 +183,11 @@ export class SlackEventListener {
     }
   }
 
-  buildConversationUpdateEvent ({ bot, team, event }) {
+  buildConversationUpdateEvent({
+    bot,
+    team,
+    event
+  }) {
     const channel = event.channel.id || event.channel
 
     return {
@@ -198,4 +230,4 @@ const random = (len) => {
     .randomBytes(Math.ceil(len / 2))
     .toString('hex')
     .slice(0, len).toUpperCase()
-}
+};
