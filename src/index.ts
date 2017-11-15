@@ -1,4 +1,4 @@
-import { SlackEventListener } from "./slack_event_listener";
+import { SlackEventListener } from "./SlackEventListener";
 
 export default SlackEventListener;
 export { SlackEventListener };
