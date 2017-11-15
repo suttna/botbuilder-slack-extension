@@ -22,7 +22,10 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
-    "postinstall-build": "^5.0.1"
+    "@types/node": "^8.0.52",
+    "postinstall-build": "^5.0.1",
+    "ts-lint": "^4.5.1",
+    "typescript": "^2.6.1"
   },
   "keywords": [
     "bot",
