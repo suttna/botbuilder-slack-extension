@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import * as crypto from "crypto";
 
 const CONVERSATION_UPDATE_EVENTS = [
   "channel_archive",
