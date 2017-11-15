@@ -83,6 +83,11 @@ server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler())
 server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler())
 ```
 
+## Contribution
+1. Install globally `typescript`, `@types/node`, `ts-lint`
+2. Use ts-lint to remove warnings
+3. Write proper pull request descriptions
+
 ## Contact
 
 - Martín Ferández <martin@suttna.com>
