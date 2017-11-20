@@ -20,6 +20,7 @@ The following events are allowed and need to be configured in slack:
 - group_archive
 - group_rename
 - group_unarchive
+- member_joined_channel
 
 ## installationUpdate
 
