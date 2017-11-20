@@ -89,8 +89,18 @@ server.post("/", connector.listen());
 // Start listenting for direct slack events
 server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler());
 
-bot.on('channel_created', (event) => {
-  console.log('channel was created');
+bot.on('conversationUpdate', (message) => {
+  console.log(message.sourceEvent.SlackMessage.type);
+
+  let se = message.sourceEvent;
+  if (se) {
+    let sm = se.SlackMessage;
+    if (sm) {
+      if (sm.type === "channel_created") {
+        console.log("channel was created");
+      }
+    }
+  }
 });
 
 // Start listenting for slack commands
