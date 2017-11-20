@@ -4,7 +4,7 @@
   "description": "Slack extension for Microsoft BotBuilder",
   "main": "lib/index.js",
   "repository": "https://github.com/suttna/botbuilder-slack-extension",
-  "author": "Martin Fernandez <fmartin91@gmail.com>",
+  "author": "",
   "license": "MIT",
   "scripts": {
     "build": "tsc && babel --source-maps -d lib/ src/",
