@@ -36,11 +36,11 @@ export class SlackEventListener {
         this.lookupBot(team).then((bot) => {
           const botbuilderEvent = this.buildBotbuilderEvent({ bot, team, event: body.event });
 
-          this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
+          this.connector.onDispatchEvents([botbuilderEvent], (error, eventBody, status) => {
             if (!error && status === 202) {
               res.end(req.body.challenge);
             } else {
-              res.end(body);
+              res.end(eventBody);
             }
 
             next();
@@ -60,11 +60,11 @@ export class SlackEventListener {
       this.lookupBot(team).then((bot) => {
         const botbuilderEvent = this.buildCommandEvent({ bot, team, commandEvent: body });
 
-        this.connector.onDispatchEvents([botbuilderEvent], (error, body, status) => {
+        this.connector.onDispatchEvents([botbuilderEvent], (error, eventBody, status) => {
           if (!error && status === 202) {
             res.end(req.body.challenge);
           } else {
-            res.end(body);
+            res.end(eventBody);
           }
 
           next();
