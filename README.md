@@ -2,6 +2,8 @@
 
 # botbuilder-slack-extension [![npm version](https://badge.fury.io/js/botbuilder-slack-extension.svg)](https://badge.fury.io/js/botbuilder-slack-extension) [![CircleCI](https://circleci.com/gh/suttna/botbuilder-slack-extension.svg?style=svg)](https://circleci.com/gh/suttna/botbuilder-slack-extension)
 
+> ⚠️ **Deprecated** Use (botbuilder-slack)[https://github.com/suttna/botbuilder-slack]
+
 Slack extension for Microsoft BotBuilder.
 
 This extension will listen for missing (in BotBuilder slack connector) events.
