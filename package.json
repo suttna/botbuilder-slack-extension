@@ -4,10 +4,10 @@
   "description": "Slack extension for Microsoft BotBuilder",
   "main": "lib/index.js",
   "repository": "https://github.com/suttna/botbuilder-slack-extension",
-  "author": "Martin Fernandez <fmartin91@gmail.com>",
+  "author": "",
   "license": "MIT",
   "scripts": {
-    "build": "babel --source-maps -d lib/ src/",
+    "build": "tsc && babel --source-maps -d lib/ src/",
     "ci": "yarn lint",
     "lint": "standard 'lib/**.js'",
     "lint:fix": "standard 'src/**.js' --fix",
@@ -22,7 +22,10 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
-    "postinstall-build": "^5.0.1"
+    "@types/node": "^8.0.52",
+    "postinstall-build": "^5.0.1",
+    "ts-lint": "^4.5.1",
+    "typescript": "^2.6.1"
   },
   "keywords": [
     "bot",

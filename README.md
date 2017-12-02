@@ -20,6 +20,7 @@ The following events are allowed and need to be configured in slack:
 - group_archive
 - group_rename
 - group_unarchive
+- member_joined_channel
 
 ## installationUpdate
 
@@ -35,6 +36,8 @@ information will be sent under `sourceEvent => SlackMessage`.
 ```
 yarn add botbuilder-slack-extension
 ```
+
+After that change events subscription url on slack: https://api.slack.com/apps/_APP_ID_/event-subscriptions.
 
 ## Usage
 
@@ -55,35 +58,60 @@ This means you can use:
 To configure the extension you simply need to create a listener and hook it in your restify server.
 
 ```javascript
-var restify = require('restify')
-var builder = require('botbuilder')
-var SlackEventListener = require('botbuilder-slack-extension')
+let restify = require('restify');
+let builder = require('botbuilder');
+let SlackEventListener = require('botbuilder-slack-extension');
 
-var connector = new builder.ChatConnector()
-var bot = new builder.UniversalBot(connector)
+let connector = new builder.ChatConnector();
+let bot = new builder.UniversalBot(connector);
 
 // SlackEventListener take two arguments, the chat connector and a lookup function for your bot.
 // The lookup function must return a promise with an object that conforms to IIdentity
-var slackEventListener = new SlackEventListener(connector, function (teamId) {
-  return new Promise(function (resolve, reject) {
-    // This is your custom get function
-    const bot = getBot(teamId)
+let slackEventListener = new SlackEventListener(connector, (teamId) => {
+  return new Promise((resolve, reject) => {
+    // This is you custom get function, which you need to implement yourself
+    const bot = getBot(teamId);
 
-    return { id: bot.id, name: bot.name }
+    return { id: bot.id, name: bot.name };
   })
 })
 
+let server = restify.createServer();
+server.use(restify.queryParser());
+server.use(restify.bodyParser());
+server.listen(process.env.port || process.env.PORT || 3978, () => {
+  console.log("%s listening to %s", server.name, server.url);
+});
+
 // Start listenting for botbuilder events
-server.post('/bot', dependencies.botConnector.listen())
+server.post("/", connector.listen());
 
 // Start listenting for direct slack events
-server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler())
+server.post('/your-slack-path-for-events', slackEventListener.webhooksHandler());
+
+bot.on('conversationUpdate', (message) => {
+  console.log(message.sourceEvent.SlackMessage.type);
+
+  let se = message.sourceEvent;
+  if (se) {
+    let sm = se.SlackMessage;
+    if (sm) {
+      if (sm.type === "channel_created") {
+        console.log("channel was created");
+      }
+    }
+  }
+});
 
 // Start listenting for slack commands
-server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler())
+server.post('/your-slack-path-for-commands', slackEventListener.commandsHandler());
+
+bot.on('slackCommand', (event) => {
+  // If you want to use slack commands
+})
 ```
 
-## Contact
-
-- Martín Ferández <martin@suttna.com>
-- Santiago Doldán <santiago@suttna.com>
+## Contribution
+1. Install globally `typescript`, `@types/node`, `ts-lint`
+2. Use ts-lint to remove warnings
+3. Write proper pull request descriptions
